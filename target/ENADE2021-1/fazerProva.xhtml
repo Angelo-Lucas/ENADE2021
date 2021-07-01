@@ -1,0 +1,115 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./WEB-INF/Template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+        <br/>
+
+        <h2>Usuários</h2>
+
+        <br/>
+
+        
+        <p:dataTable var="valor" value="#{resultadoController.resultados}"
+                     id="tabelaTQ" emptyMessage="Nenhum registro encontrado"
+                     paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                     paginator="true" rows="10" rowsPerPageTemplate="5,10,25,50,100,9999">
+
+            <p:column headerText="Código Resultado" sortBy="#{valor.id}" filterBy="#{valor.id}">
+
+                <h:outputText value="#{valor.id}" />
+            </p:column>
+            
+            <p:column headerText="Valor Obtido" sortBy="#{valor.valorObtido}" filterBy="#{valor.valorObtido}">
+
+                <h:outputText value="#{valor.valorObtido}" />
+            </p:column>
+
+            <p:column headerText="Nome Aluno" sortBy="#{valor.usuarioidUsuario.nome}" filterBy="#{valor.usuarioidUsuario.nome}">
+
+                <h:outputText value="#{valor.usuarioidUsuario.nome}" />
+            </p:column>
+            
+            <p:column headerText="Código Prova" sortBy="#{valor.provaidProva}" filterBy="#{valor.provaidProva}">
+
+                <h:outputText value="#{valor.provaidProva}" />
+            </p:column>
+
+        </p:dataTable>
+
+        <br/>
+
+        <p:commandButton icon="ui-icon-plus" value="Novo" onclick="PF('record').show();" />  
+
+        <h:form>
+            <div align="center">
+                <h3>Exportar dados da página</h3>
+
+                <h:commandLink id="excel">
+                    <p:graphicImage name="imagens/exports/excel.png" />
+                    <p:dataExporter type="xls" target="tabelaTQ" fileName="export"/>
+                </h:commandLink>
+
+                <h:commandLink id="xlsx">
+                    <p:graphicImage name="imagens/exports/excelN.png" width="2%" />
+                    <p:dataExporter type="xlsxstream" target="tabelaTQ" fileName="export"/>
+                </h:commandLink>
+
+                <h:commandLink id="pdf">
+                    <p:graphicImage name="imagens/exports/pdf.png" />
+                    <p:dataExporter type="pdf" target="tabelaTQ" fileName="export" />
+                </h:commandLink>
+
+
+                <h:commandLink>
+                    <p:graphicImage name="imagens/exports/csv.png" width="24"/>
+                    <p:dataExporter type="csv" target="tabelaTQ" fileName="export" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage  name="imagens/exports/xml.png" width="24"/>
+                    <p:dataExporter type="xml" target="tabelaTQ" fileName="export" />
+                </h:commandLink>
+            </div>
+        </h:form>
+
+        <p:dialog header="Novo" widgetVar="record" modal="true">
+            <h:form>
+                <p:panelGrid id="panelRecord" columns="2"> 
+                    Valor Obtido:
+                    <p:inputText id="valor" value="#{resultadoController.resultado.valorObtido}" />
+                    Aluno:
+                    <p:selectOneMenu id="aluno" value="#{resultadoController.resultado.usuarioidUsuario}" converter="usuarioConverter">
+                        <f:selectItem itemLabel="Selecione" itemValue="" />
+                        <f:selectItems value="#{usuarioController.usuarios}" var="respname" itemLabel="#{respname.id}" itemValue="#{respname}" />
+                    </p:selectOneMenu>
+                    Prova:
+                    <p:selectOneMenu id="prova" value="#{resultadoController.resultado.provaidProva}" converter="provaConverter">
+                        <f:selectItem itemLabel="Selecione" itemValue="" />
+                        <f:selectItems value="#{provaController.provas}" var="respname" itemLabel="#{respname.id}" itemValue="#{respname}" />
+                    </p:selectOneMenu>
+                    </p:panelGrid>
+
+                <br/>
+                <p:commandButton value="Salvar"  
+                                 actionListener="#{resultadoController.gravar()}" onclick="record.hide()" alt="Record"/> 
+                
+            </h:form>
+           
+        </p:dialog>
+
+
+        <p:dialog header="Delete" widgetVar="remove" modal="true"> 
+            <h:form>
+                Você tem certeza?
+                <p:commandButton value="Deletar"  
+                                 actionListener="#{usuarioController.remover}" onclick="remove.hide()" alt="Delete" /> 
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
